@@ -1,6 +1,6 @@
 add_executable(tests
-    test_main.c
-    test_factorial.c
+    main.c
+    factorial_tests.c
 )
 
 target_include_directories(tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
