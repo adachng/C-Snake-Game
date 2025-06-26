@@ -1,3 +1,6 @@
 [submodule "third_party/SDL"]
 	path = third_party/SDL
 	url = https://github.com/libsdl-org/SDL
+[submodule "third_party/rktest"]
+	path = third_party/rktest
+	url = https://github.com/Warwolt/rktest
