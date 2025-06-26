@@ -18,3 +18,8 @@ This software uses third-party libraries provided 'as-is'. See individual licens
 **Copyright:** © 1997-2025 Sam Lantinga<br>
 **License:** zlib License (see [license/SDL.txt](license/SDL.txt))<br>
 **Usage:** Application window management and input handling.
+
+### [RK Test](https://github.com/Warwolt/rktest) (latest `main` commit)
+
+**License:** Public Domain (see [license/rktest.txt](license/rktest.txt))<br>
+**Usage:** Unit testing framework.
