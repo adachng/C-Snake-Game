@@ -1,12 +1,302 @@
+#include <stdlib.h>
+#include <assert.h>
+
 #include <rktest/rktest.h>
 #include <snake_game_manager.h>
 
-TEST(snake_gameplay_tests, test1)
+TEST(snake_gameplay_tests, scene_init_test)
 {
-    EXPECT_TRUE(SnakeGameManager__func());
+    struct SnakeGameManager *snake_game_manager;
+    char *scene_str;
+    {
+        // 3-by-3 map; expect:
+        // ". . .\n"
+        // ". @ .\n"
+        // "$ . ."
+        snake_game_manager = SnakeGameManager__init(3, 3);
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+
+        // printf("DEBUG: scene_string =\n%s\n\n", scene_str); // NOTE: toggle to see the game scene
+        EXPECT_STREQ(scene_str, ". . .\n"
+                                ". @ .\n"
+                                "$ . .");
+
+        SnakeGameManager__deinit(snake_game_manager);
+        free(scene_str);
+    }
+
+    {
+        // 4-by-4 map; expect:
+        // ". . . .\n"
+        // ". . @ .\n"
+        // "$ . . .\n"
+        // ". . . ."
+        snake_game_manager = SnakeGameManager__init(4, 4);
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+
+        // printf("DEBUG: scene_string =\n%s\n\n", scene_str); // NOTE: toggle to see the game scene
+        EXPECT_STREQ(scene_str, ". . . .\n"
+                                ". . @ .\n"
+                                "$ . . .\n"
+                                ". . . .");
+
+        SnakeGameManager__deinit(snake_game_manager);
+        free(scene_str);
+    }
+
+    {
+        // 5-by-5 map; expect:
+        // ". . . . .\n"
+        // ". . . . .\n"
+        // ". . @ . .\n"
+        // "$ . . . .\n"
+        // ". . . . ."
+        snake_game_manager = SnakeGameManager__init(5, 5);
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+
+        // printf("DEBUG: scene_string =\n%s\n\n", scene_str); // NOTE: toggle to see the game scene
+        EXPECT_STREQ(scene_str,
+                     ". . . . .\n"
+                     ". . . . .\n"
+                     ". . @ . .\n"
+                     "$ . . . .\n"
+                     ". . . . .");
+
+        SnakeGameManager__deinit(snake_game_manager);
+        free(scene_str);
+    }
+
+    {
+        // 5-by-4 map; expect:
+        // ". . . . .\n"
+        // ". . @ . .\n"
+        // "$ . . . .\n"
+        // ". . . . ."
+        snake_game_manager = SnakeGameManager__init(5, 4);
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+
+        // printf("DEBUG: scene_string =\n%s\n\n", scene_str); // NOTE: toggle to see the game scene
+        EXPECT_STREQ(scene_str, ". . . . .\n"
+                                ". . @ . .\n"
+                                "$ . . . .\n"
+                                ". . . . .");
+
+        SnakeGameManager__deinit(snake_game_manager);
+        free(scene_str);
+    }
+
+    {
+        // 4-by-5 map; expect:
+        // ". . . .\n"
+        // ". . . .\n"
+        // ". . @ .\n"
+        // "$ . . .\n"
+        // ". . . ."
+        snake_game_manager = SnakeGameManager__init(4, 5);
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+
+        // printf("DEBUG: scene_string =\n%s\n\n", scene_str); // NOTE: toggle to see the game scene
+        EXPECT_STREQ(scene_str, ". . . .\n"
+                                ". . . .\n"
+                                ". . @ .\n"
+                                "$ . . .\n"
+                                ". . . .");
+
+        SnakeGameManager__deinit(snake_game_manager);
+        free(scene_str);
+    }
 }
 
-TEST(snake_gameplay_tests, test2)
+TEST(snake_gameplay_tests, coordinates_test)
 {
-    EXPECT_FALSE(!SnakeGameManager__func());
+    struct SnakeGameManager *snake_game_manager;
+    int snake_head_x, snake_head_y;
+
+    // ". . .\n"
+    // ". @ .\n"
+    // "$ . ."
+    snake_game_manager = SnakeGameManager__init(3, 3);
+    SnakeGameManager__debug_get_snake_head_coord(snake_game_manager, &snake_head_x, &snake_head_y);
+
+    ASSERT_EQ(snake_head_x, 0);
+    ASSERT_EQ(snake_head_y, 2);
+
+    // ". . . .\n"
+    // ". . @ .\n"
+    // "$ . . .\n"
+    // ". . . ."
+    SnakeGameManager__deinit(snake_game_manager);
+    snake_game_manager = SnakeGameManager__init(4, 4);
+    SnakeGameManager__debug_get_snake_head_coord(snake_game_manager, &snake_head_x, &snake_head_y);
+
+    ASSERT_EQ(snake_head_x, 0);
+    ASSERT_EQ(snake_head_y, 2);
+
+    // ". . . .\n"
+    // ". . . .\n"
+    // ". . @ .\n"
+    // "$ . . .\n"
+    // ". . . .\n"
+    // ". . . ."
+    SnakeGameManager__deinit(snake_game_manager);
+    snake_game_manager = SnakeGameManager__init(4, 6);
+    SnakeGameManager__debug_get_snake_head_coord(snake_game_manager, &snake_head_x, &snake_head_y);
+
+    ASSERT_EQ(snake_head_x, 0);
+    ASSERT_EQ(snake_head_y, 3);
+}
+
+TEST(snake_gameplay_tests, basic_movement_test)
+{
+    struct SnakeGameManager *snake_game_manager;
+    char *scene_str;
+
+    {
+        // ". . .\n"
+        // ". @ .\n"
+        // "$ . ."
+        snake_game_manager = SnakeGameManager__init(3, 3);
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+
+        EXPECT_STREQ(scene_str, ". . .\n"
+                                ". @ .\n"
+                                "$ . .");
+        free(scene_str);
+    }
+
+    {
+        // ". . .\n"
+        // ". @ .\n"
+        // ". $ ."
+        SnakeGameManager__update(snake_game_manager);
+
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        EXPECT_STREQ(scene_str, ". . .\n"
+                                ". @ .\n"
+                                ". $ .");
+        free(scene_str);
+    }
+
+    {
+        // ". . .\n"
+        // ". @ .\n"
+        // ". . $"
+        SnakeGameManager__update(snake_game_manager);
+
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        EXPECT_STREQ(scene_str, ". . .\n"
+                                ". @ .\n"
+                                ". . $");
+        free(scene_str);
+    }
+
+    SnakeGameManager__set_direction(snake_game_manager, 'w');
+    {
+        // ". . .\n"
+        // ". @ $\n"
+        // ". . ."
+        SnakeGameManager__update(snake_game_manager);
+
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        EXPECT_STREQ(scene_str, ". . .\n"
+                                ". @ $\n"
+                                ". . .");
+        free(scene_str);
+    }
+
+    {
+        // ". . $\n"
+        // ". @ .\n"
+        // ". . ."
+        SnakeGameManager__update(snake_game_manager);
+
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        EXPECT_STREQ(scene_str, ". . $\n"
+                                ". @ .\n"
+                                ". . .");
+        free(scene_str);
+    }
+
+    SnakeGameManager__set_direction(snake_game_manager, 'a');
+    {
+        // ". $ .\n"
+        // ". @ .\n"
+        // ". . ."
+        SnakeGameManager__update(snake_game_manager);
+
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        EXPECT_STREQ(scene_str, ". $ .\n"
+                                ". @ .\n"
+                                ". . .");
+        free(scene_str);
+    }
+
+    {
+        // "$ . .\n"
+        // ". @ .\n"
+        // ". . ."
+        SnakeGameManager__update(snake_game_manager);
+
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        EXPECT_STREQ(scene_str, "$ . .\n"
+                                ". @ .\n"
+                                ". . .");
+        free(scene_str);
+    }
+
+    SnakeGameManager__set_direction(snake_game_manager, 's');
+    {
+        // ". . .\n"
+        // "$ @ .\n"
+        // ". . ."
+        SnakeGameManager__update(snake_game_manager);
+
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        EXPECT_STREQ(scene_str, ". . .\n"
+                                "$ @ .\n"
+                                ". . .");
+        free(scene_str);
+    }
+
+    {
+        // ". . .\n"
+        // ". @ .\n"
+        // "$ . ."
+        SnakeGameManager__update(snake_game_manager);
+
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        EXPECT_STREQ(scene_str, ". . .\n"
+                                ". @ .\n"
+                                "$ . .");
+        free(scene_str);
+    }
+
+    SnakeGameManager__set_direction(snake_game_manager, 'd');
+    {
+        // ". . .\n"
+        // ". @ .\n"
+        // ". $ ."
+        SnakeGameManager__update(snake_game_manager);
+
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        EXPECT_STREQ(scene_str, ". . .\n"
+                                ". @ .\n"
+                                ". $ .");
+        free(scene_str);
+    }
+
+    {
+        // ". . .\n"
+        // ". @ .\n"
+        // ". . $"
+        SnakeGameManager__update(snake_game_manager);
+
+        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        EXPECT_STREQ(scene_str, ". . .\n"
+                                ". @ .\n"
+                                ". . $");
+        free(scene_str);
+    }
+
+    SnakeGameManager__deinit(snake_game_manager);
 }
