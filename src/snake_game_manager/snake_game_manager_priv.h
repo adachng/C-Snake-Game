@@ -90,18 +90,18 @@ static inline void _update_scene(struct SnakeGameManager *self)
 
     assert(self->apple_coord_y < self->rows && self->apple_coord_y >= 0);
     assert(self->apple_coord_x < self->cols && self->apple_coord_x >= 0);
-    self->scene[self->apple_coord_y][self->apple_coord_x] = CELL_APPLE;
+    self->scene[self->apple_coord_y][self->apple_coord_x] |= CELL_APPLE;
     assert(self->head);
     if (self->head->coord_y >= 0 && self->head->coord_y < self->rows &&
         self->head->coord_x >= 0 && self->head->coord_x < self->cols)
-        self->scene[self->head->coord_y][self->head->coord_x] = CELL_SNAKE_HEAD;
+        self->scene[self->head->coord_y][self->head->coord_x] |= CELL_SNAKE_HEAD;
 
     struct SnakePart *current = self->head->next;
     while (current != NULL)
     {
         assert(current->coord_y >= 0 && current->coord_y < self->rows);
         assert(current->coord_x >= 0 && current->coord_x < self->cols);
-        self->scene[current->coord_y][current->coord_x] = CELL_SNAKE_BODY;
+        self->scene[current->coord_y][current->coord_x] |= CELL_SNAKE_BODY;
         current = current->next;
     }
 }
