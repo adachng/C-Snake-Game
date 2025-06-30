@@ -12,8 +12,8 @@ struct SnakeGameManager
     enum GridCellState **scene; // 2d array for snake game scene; only update via _update_scene()
     int rows;                   // y-axis; minimum 3, maximum 128 (arbitrary)
     int cols;                   // x-axis; minimum 3, maximum 128 (arbitrary)
-    int apple_coord_x;
-    int apple_coord_y;
+    int apple_coord_x;          // -1 together with apple_coord_y if game is won
+    int apple_coord_y;          // -1 together with apple_coord_x if game is won
     enum SnakeDirection current_direction;
 };
 #include "snake_game_manager_priv.h"
