@@ -455,3 +455,65 @@ TEST(snake_gameplay_tests, game_lost_test)
         free(scene_str);
     }
 }
+
+TEST(snake_gameplay_tests, game_won_test)
+{
+    struct SnakeGameManager *snake_game_manager;
+
+    snake_game_manager = SnakeGameManager__init(3, 3);
+    SnakeGameManager__debug_set_apple_coord(snake_game_manager, 1, 2);
+    // ". . .\n"
+    // ". . .\n"
+    // "$ @ ."
+
+    EXPECT_FALSE(SnakeGameManager__is_game_won(snake_game_manager));
+    SnakeGameManager__update(snake_game_manager);
+    SnakeGameManager__debug_set_apple_coord(snake_game_manager, 2, 2);
+    // ". . .\n"
+    // ". . .\n"
+    // "# $ @"
+    EXPECT_FALSE(SnakeGameManager__is_game_won(snake_game_manager));
+    SnakeGameManager__update(snake_game_manager);
+    SnakeGameManager__debug_set_apple_coord(snake_game_manager, 2, 1);
+    // ". . .\n"
+    // ". . @\n"
+    // "# # $"
+    EXPECT_FALSE(SnakeGameManager__is_game_won(snake_game_manager));
+    SnakeGameManager__set_direction(snake_game_manager, 'w');
+    SnakeGameManager__update(snake_game_manager);
+    SnakeGameManager__debug_set_apple_coord(snake_game_manager, 2, 0);
+    // ". . @\n"
+    // ". . $\n"
+    // "# # #"
+    EXPECT_FALSE(SnakeGameManager__is_game_won(snake_game_manager));
+    SnakeGameManager__update(snake_game_manager);
+    SnakeGameManager__debug_set_apple_coord(snake_game_manager, 1, 0);
+    // ". @ $\n"
+    // ". . #\n"
+    // "# # #"
+    EXPECT_FALSE(SnakeGameManager__is_game_won(snake_game_manager));
+    SnakeGameManager__set_direction(snake_game_manager, 'a');
+    SnakeGameManager__update(snake_game_manager);
+    SnakeGameManager__debug_set_apple_coord(snake_game_manager, 0, 0);
+    // "@ $ #\n"
+    // ". . #\n"
+    // "# # #"
+    EXPECT_FALSE(SnakeGameManager__is_game_won(snake_game_manager));
+    SnakeGameManager__update(snake_game_manager);
+    SnakeGameManager__debug_set_apple_coord(snake_game_manager, 0, 1);
+    // "$ # #\n"
+    // "@ . #\n"
+    // "# # #"
+    EXPECT_FALSE(SnakeGameManager__is_game_won(snake_game_manager));
+    SnakeGameManager__set_direction(snake_game_manager, 's');
+    SnakeGameManager__update(snake_game_manager);
+    // "# # #\n"
+    // "$ @ #\n"
+    // "# # #"
+    EXPECT_FALSE(SnakeGameManager__is_game_won(snake_game_manager));
+    SnakeGameManager__set_direction(snake_game_manager, 'd');
+    SnakeGameManager__update(snake_game_manager);
+    EXPECT_TRUE(SnakeGameManager__is_game_won(snake_game_manager));
+
+    SnakeGameManager__deinit(snake_game_manager);
+}
