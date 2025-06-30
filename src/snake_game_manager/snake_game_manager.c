@@ -195,20 +195,31 @@ void SnakeGameManager__set_direction(struct SnakeGameManager *self, const char d
     _debug_assert_pointers(self);
     assert(dir == 'w' || dir == 'a' || dir == 's' || dir == 'd');
 
-    // WIP: keep direction same if self->head->next is at that direction
     switch (dir)
     {
     case 'w':
-        self->current_direction = DIRECTION_UP;
+        if (self->head->next == NULL || // if not NULL, disallow if next part is above
+            !(self->head->next->coord_x == self->head->coord_x &&
+              self->head->next->coord_y == self->head->coord_y - 1))
+            self->current_direction = DIRECTION_UP;
         break;
     case 'a':
-        self->current_direction = DIRECTION_LEFT;
+        if (self->head->next == NULL || // if not NULL, disallow if next part is left
+            !(self->head->next->coord_x == self->head->coord_x - 1 &&
+              self->head->next->coord_y == self->head->coord_y))
+            self->current_direction = DIRECTION_LEFT;
         break;
     case 's':
-        self->current_direction = DIRECTION_DOWN;
+        if (self->head->next == NULL || // if not NULL, disallow if next part is down
+            !(self->head->next->coord_x == self->head->coord_x &&
+              self->head->next->coord_y == self->head->coord_y + 1))
+            self->current_direction = DIRECTION_DOWN;
         break;
     default:
-        self->current_direction = DIRECTION_RIGHT;
+        if (self->head->next == NULL || // if not NULL, disallow if next part is right
+            !(self->head->next->coord_x == self->head->coord_x + 1 &&
+              self->head->next->coord_y == self->head->coord_y))
+            self->current_direction = DIRECTION_RIGHT;
         break;
     }
 }
