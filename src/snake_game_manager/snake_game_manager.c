@@ -36,23 +36,20 @@ struct SnakeGameManager *SnakeGameManager__init(const int x, const int y)
         assert(ret->scene[i]);
     }
 
-    ret->head = (struct SnakePart *)malloc(sizeof(struct SnakePart));
-    ret->head->is_head = true;
-    ret->head->coord_x = 0;
-    ret->head->next = NULL;
-
     // Initialise apple at middle of screen (prefer top-right) and snake head (leftmost 1 grid below apple).
     ret->apple_coord_x = ret->cols / 2;
+    int snake_head_coord_y;
     if (ret->rows % 2)
     {
         ret->apple_coord_y = ret->rows / 2;
-        ret->head->coord_y = ret->rows / 2 + 1; // start at leftmost just below apple
+        snake_head_coord_y = ret->rows / 2 + 1; // start at leftmost just below apple
     }
     else
     {
         ret->apple_coord_y = ret->rows / 2 - 1;
-        ret->head->coord_y = ret->rows / 2; // start at leftmost just below apple
+        snake_head_coord_y = ret->rows / 2; // start at leftmost just below apple
     }
+    ret->head = SnakePart__allocate_instance(true, 0, snake_head_coord_y, NULL);
     ret->current_direction = DIRECTION_RIGHT;
 
     _update_scene(ret);
