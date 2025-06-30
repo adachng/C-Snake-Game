@@ -63,11 +63,7 @@ static inline void _move_snake(struct SnakeGameManager *self,
     // Create new part if apple is eaten
     if (*is_apple_eaten_p)
     {
-        previous_p->next = (struct SnakePart *)malloc(sizeof(struct SnakePart));
-        previous_p->next->is_head = false;
-        previous_p->next->next = NULL;
-        previous_p->next->coord_x = old_x;
-        previous_p->next->coord_y = old_y;
+        previous_p = SnakePart__allocate_instance(false, old_x, old_y, NULL);
     }
 }
 
