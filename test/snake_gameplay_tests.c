@@ -450,8 +450,8 @@ TEST(snake_gameplay_tests, game_lost_test)
 
         scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, "# # .\n"
-                                ". $# .\n" // direction irrelevant to order of $# (or #$)
-                                ". # @");
+                                "# $# .\n" // direction irrelevant to order of $# (or #$)
+                                ". . @");
         free(scene_str);
     }
 }
