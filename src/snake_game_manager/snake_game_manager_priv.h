@@ -88,9 +88,12 @@ static inline void _update_scene(struct SnakeGameManager *self)
         }
     }
 
-    assert(self->apple_coord_y < self->rows && self->apple_coord_y >= 0);
-    assert(self->apple_coord_x < self->cols && self->apple_coord_x >= 0);
-    self->scene[self->apple_coord_y][self->apple_coord_x] |= CELL_APPLE;
+    assert((self->apple_coord_x == -1 && self->apple_coord_y == -1) || // ignore error case if game won
+           (self->apple_coord_y < self->rows && self->apple_coord_y >= 0));
+    assert((self->apple_coord_x == -1 && self->apple_coord_y == -1) || // ignore error case if game won
+           (self->apple_coord_x < self->cols && self->apple_coord_x >= 0));
+    if (!(self->apple_coord_x == -1 && self->apple_coord_y == -1)) // don't spawn apple if game won
+        self->scene[self->apple_coord_y][self->apple_coord_x] |= CELL_APPLE;
     assert(self->head);
     if (self->head->coord_y >= 0 && self->head->coord_y < self->rows &&
         self->head->coord_x >= 0 && self->head->coord_x < self->cols)
