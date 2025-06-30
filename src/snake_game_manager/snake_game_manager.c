@@ -76,18 +76,7 @@ bool SnakeGameManager__is_game_won(struct SnakeGameManager *self)
 {
     _debug_assert_pointers(self);
 
-    bool ret = true;
-    for (int i = 0; i < self->rows; i++)
-    {
-        for (int j = 0; j < self->cols; j++)
-        {
-            // If a cell is neither the head nor body, then game is not won yet.
-            if (self->scene[i][j] != CELL_SNAKE_HEAD &&
-                self->scene[i][j] != CELL_SNAKE_BODY)
-                ret = false;
-        }
-    }
-    return ret;
+    return self->apple_coord_x == -1 && self->apple_coord_y == -1;
 }
 
 bool SnakeGameManager__is_game_lost(struct SnakeGameManager *self)
@@ -179,9 +168,17 @@ void SnakeGameManager__update(struct SnakeGameManager *self)
             }
         }
 
-        const int rand_index = rand() % number_of_possible_coords; // TODO(?): this is not random
-        self->apple_coord_x = possible_x_coords[rand_index];
-        self->apple_coord_y = possible_y_coords[rand_index];
+        if (number_of_possible_coords != 0) // if game is won, there is no place for apple to spawn
+        {
+            const int rand_index = rand() % number_of_possible_coords; // TODO(?): this is not random
+            self->apple_coord_x = possible_x_coords[rand_index];
+            self->apple_coord_y = possible_y_coords[rand_index];
+        }
+        else
+        {
+            self->apple_coord_x = -1;
+            self->apple_coord_y = -1;
+        }
 
         free(possible_x_coords);
         free(possible_y_coords);
