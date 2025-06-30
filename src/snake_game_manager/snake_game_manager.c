@@ -195,6 +195,7 @@ void SnakeGameManager__set_direction(struct SnakeGameManager *self, const char d
     _debug_assert_pointers(self);
     assert(dir == 'w' || dir == 'a' || dir == 's' || dir == 'd');
 
+    // WIP: keep direction same if self->head->next is at that direction
     switch (dir)
     {
     case 'w':
