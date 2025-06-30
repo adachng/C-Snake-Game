@@ -77,5 +77,15 @@ void SnakeGameManager__debug_get_apple_coord(struct SnakeGameManager *self,
 void SnakeGameManager__debug_set_apple_coord(struct SnakeGameManager *self,
                                              const int x,
                                              const int y);
+/**
+ * @brief Sets the coordinates of the snake head. Does not account for collisions.
+ *
+ * @param self SnakeGameManager instance.
+ * @param x x-coordinate of the snake head; 0 being leftmost.
+ * @param y y-coordinate of the snake head; 0 being topmost.
+ */
+void SnakeGameManager__debug_set_snake_head_coord(struct SnakeGameManager *self,
+                                                  const int x,
+                                                  const int y);
 
 #endif // SRC_SNAKE_GAME_MANAGER_SNAKE_GAME_MANAGER_H

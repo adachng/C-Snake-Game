@@ -294,3 +294,15 @@ void SnakeGameManager__debug_set_apple_coord(struct SnakeGameManager *self,
 
     _update_scene(self);
 }
+
+void SnakeGameManager__debug_set_snake_head_coord(struct SnakeGameManager *self,
+                                                  const int x,
+                                                  const int y)
+{
+    _debug_assert_pointers(self);
+
+    self->head->coord_x = x;
+    self->head->coord_y = y;
+
+    _update_scene(self);
+}
