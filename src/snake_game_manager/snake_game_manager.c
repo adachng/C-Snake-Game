@@ -203,7 +203,9 @@ char *SnakeGameManager_alloc_render_scene_to_string(struct SnakeGameManager *sel
     return ret;
 }
 
-void SnakeGameManager__debug_get_snake_head_coord(struct SnakeGameManager *self, int *x, int *y)
+void SnakeGameManager__debug_get_snake_head_coord(struct SnakeGameManager *self,
+                                                  int *x,
+                                                  int *y)
 {
     _debug_assert_pointers(self);
 
