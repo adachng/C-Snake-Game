@@ -2,6 +2,8 @@
 #ifndef SRC_SNAKE_GAME_MANAGER_SNAKE_PART_PRIV_H
 #define SRC_SNAKE_GAME_MANAGER_SNAKE_PART_PRIV_H
 
+#include <assert.h>
+#include <stdlib.h>
 #include <stdbool.h>
 
 struct SnakePart
@@ -18,6 +20,7 @@ struct SnakePart *SnakePart__allocate_instance(const bool is_head,
                                                const struct SnakePart *next)
 {
     struct SnakePart *ret = (struct SnakePart *)malloc(sizeof(struct SnakePart));
+    assert(ret);
 
     ret->is_head = is_head;
     ret->coord_x = coord_x;
@@ -26,7 +29,5 @@ struct SnakePart *SnakePart__allocate_instance(const bool is_head,
 
     return ret;
 }
-
-// TODO: init head at(?)
 
 #endif // SRC_SNAKE_GAME_MANAGER_SNAKE_PART_PRIV_H

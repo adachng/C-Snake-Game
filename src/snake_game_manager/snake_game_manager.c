@@ -94,6 +94,14 @@ bool SnakeGameManager__is_game_lost(struct SnakeGameManager *self)
 {
     _debug_assert_pointers(self);
 
+    // "Collision" with wall
+    if (self->head->coord_x < 0 ||
+        self->head->coord_x >= self->cols ||
+        self->head->coord_y < 0 ||
+        self->head->coord_y >= self->rows)
+        return true;
+
+    // Collision with body
     for (int i = 0; i < self->rows; i++)
     {
         for (int j = 0; j < self->cols; j++)
@@ -106,6 +114,24 @@ bool SnakeGameManager__is_game_lost(struct SnakeGameManager *self)
     }
 
     return false;
+}
+
+int SnakeGameManager__get_score(struct SnakeGameManager *self)
+{
+    _debug_assert_pointers(self);
+
+    int ret = 0;
+    for (struct SnakePart *current = self->head->next;
+         current != NULL;
+         current = current->next)
+    {
+        assert(!(current == self->head && !(self->head->is_head)));
+        assert(!(current != self->head && current->is_head));
+
+        ret++;
+    }
+
+    return ret;
 }
 
 void SnakeGameManager__update(struct SnakeGameManager *self)
@@ -132,9 +158,33 @@ void SnakeGameManager__update(struct SnakeGameManager *self)
         break;
     }
 
+    // Spawn apple based on randomised possible coords.
     if (is_apple_eaten)
     {
-        // WIP
+        int *possible_x_coords = (int *)malloc(sizeof(int) * (self->rows) * (self->cols));
+        int *possible_y_coords = (int *)malloc(sizeof(int) * (self->rows) * (self->cols));
+        int number_of_possible_coords = 0;
+
+        // Find an array of possible coordinates to spawn the apple in.
+        for (int i = 0; i < self->rows; i++)
+        {
+            for (int j = 0; j < self->cols; j++)
+            {
+                if (self->scene[i][j] == CELL_EMPTY)
+                {
+                    possible_x_coords[number_of_possible_coords] = j;
+                    possible_y_coords[number_of_possible_coords] = i;
+                    number_of_possible_coords++;
+                }
+            }
+        }
+
+        const int rand_index = rand() % number_of_possible_coords; // TODO(?): this is not random
+        self->apple_coord_x = possible_x_coords[rand_index];
+        self->apple_coord_y = possible_y_coords[rand_index];
+
+        free(possible_x_coords);
+        free(possible_y_coords);
     }
 
     _update_scene(self);
@@ -206,6 +256,32 @@ void SnakeGameManager__debug_get_snake_head_coord(struct SnakeGameManager *self,
 {
     _debug_assert_pointers(self);
 
+    assert(x);
     *x = self->head->coord_x;
+    assert(y);
     *y = self->head->coord_y;
+}
+
+void SnakeGameManager__debug_get_apple_coord(struct SnakeGameManager *self,
+                                             int *x,
+                                             int *y)
+{
+    _debug_assert_pointers(self);
+
+    assert(x);
+    *x = self->apple_coord_x;
+    assert(y);
+    *y = self->apple_coord_y;
+}
+
+void SnakeGameManager__debug_set_apple_coord(struct SnakeGameManager *self,
+                                             const int x,
+                                             const int y)
+{
+    _debug_assert_pointers(self);
+
+    self->apple_coord_x = x;
+    self->apple_coord_y = y;
+
+    _update_scene(self);
 }
