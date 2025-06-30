@@ -20,8 +20,10 @@ static inline void _move_snake(struct SnakeGameManager *self,
 {
     assert(self->head);
     assert(dir == 'w' || dir == 'a' || dir == 's' || dir == 'd');
+    assert(is_apple_eaten_p);
 
-    int old_x = self->head->coord_x, old_y = self->head->coord_y;
+    int past_x = self->head->coord_x; // only used if apple is eaten
+    int past_y = self->head->coord_y; // only used if apple is eaten
 
     switch (dir)
     {
@@ -46,24 +48,30 @@ static inline void _move_snake(struct SnakeGameManager *self,
 
     // Do "trailing"
     struct SnakePart *current_p = self->head->next;
-    struct SnakePart *previous_p;
+    struct SnakePart *previous_p = NULL; // NOTE: = NULL is really good for debugging
     while (current_p != NULL)
     {
-        current_p->coord_x = old_x;
-        current_p->coord_y = old_y;
+        int temp = current_p->coord_x; // for swapping; this swapping "motion" is what does the trailing
+        current_p->coord_x = past_x;
+        past_x = temp;
+
+        temp = current_p->coord_y;
+        current_p->coord_y = past_y;
+        past_y = temp;
+
         previous_p = current_p;
         current_p = current_p->next;
-        if (current_p != NULL)
-        {
-            old_x = current_p->coord_x;
-            old_y = current_p->coord_y;
-        }
+        // After the while loop, past_x and past_y will have the coordinates of
+        // the old tail end which is now CELL_EMPTY.
     }
 
-    // Create new part if apple is eaten
+    // Create new part if apple is eaten.
     if (*is_apple_eaten_p)
     {
-        previous_p = SnakePart__allocate_instance(false, old_x, old_y, NULL);
+        if (previous_p != NULL) // score of at least 1
+            previous_p->next = SnakePart__allocate_instance(false, past_x, past_y, NULL);
+        else // score of 0
+            self->head->next = SnakePart__allocate_instance(false, past_x, past_y, NULL);
     }
 }
 
@@ -94,6 +102,7 @@ static inline void _update_scene(struct SnakeGameManager *self)
         assert(current->coord_y >= 0 && current->coord_y < self->rows);
         assert(current->coord_x >= 0 && current->coord_x < self->cols);
         self->scene[current->coord_y][current->coord_x] = CELL_SNAKE_BODY;
+        current = current->next;
     }
 }
 

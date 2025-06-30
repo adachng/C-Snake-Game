@@ -36,6 +36,7 @@ bool SnakeGameManager__is_game_won(struct SnakeGameManager *self);
  * @return false if the game is not yet failed.
  */
 bool SnakeGameManager__is_game_lost(struct SnakeGameManager *self);
+int SnakeGameManager__get_score(struct SnakeGameManager *self);
 
 /**
  * @brief Iterates the game tick once (i.e. moves the snake 1 grid towards its current direction).
@@ -60,6 +61,21 @@ void SnakeGameManager__set_direction(struct SnakeGameManager *self, const char d
  */
 char *SnakeGameManager_alloc_render_scene_to_string(struct SnakeGameManager *self);
 
-void SnakeGameManager__debug_get_snake_head_coord(struct SnakeGameManager *self, int *x, int *y);
+void SnakeGameManager__debug_get_snake_head_coord(struct SnakeGameManager *self,
+                                                  int *x,
+                                                  int *y);
+void SnakeGameManager__debug_get_apple_coord(struct SnakeGameManager *self,
+                                             int *x,
+                                             int *y);
+/**
+ * @brief Sets the coordinates of the apple. Does not account for collisions.
+ *
+ * @param self SnakeGameManager instance.
+ * @param x x-coordinate of the apple; 0 being leftmost.
+ * @param y y-coordinate of the apple; 0 being topmost.
+ */
+void SnakeGameManager__debug_set_apple_coord(struct SnakeGameManager *self,
+                                             const int x,
+                                             const int y);
 
 #endif // SRC_SNAKE_GAME_MANAGER_SNAKE_GAME_MANAGER_H
