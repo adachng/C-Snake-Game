@@ -7,10 +7,21 @@
 #include <assert.h>
 #include <string.h>
 
-static inline void _move_snake(struct SnakeGameManager *self, const char dir, bool *is_apple_eaten_p)
+/**
+ * @brief Handles moving the snake head as well as the body/tail.
+ *
+ * @param self SnakeGameManager instance.
+ * @param dir Either 'w', 'a', 's', or 'd'.
+ * @param is_apple_eaten_p Bool set by this function to tell if an apple is eaten.
+ */
+static inline void _move_snake(struct SnakeGameManager *self,
+                               const char dir,
+                               bool *is_apple_eaten_p)
 {
     assert(self->head);
     assert(dir == 'w' || dir == 'a' || dir == 's' || dir == 'd');
+
+    int old_x = self->head->coord_x, old_y = self->head->coord_y;
 
     switch (dir)
     {
@@ -33,18 +44,31 @@ static inline void _move_snake(struct SnakeGameManager *self, const char dir, bo
     else
         *is_apple_eaten_p = false;
 
+    // Do "trailing"
+    struct SnakePart *current_p = self->head->next;
+    struct SnakePart *previous_p;
+    while (current_p != NULL)
+    {
+        current_p->coord_x = old_x;
+        current_p->coord_y = old_y;
+        previous_p = current_p;
+        current_p = current_p->next;
+        if (current_p != NULL)
+        {
+            old_x = current_p->coord_x;
+            old_y = current_p->coord_y;
+        }
+    }
+
     // Create new part if apple is eaten
     if (*is_apple_eaten_p)
     {
-        self->head->next = (struct SnakePart *)malloc(sizeof(struct SnakePart));
-        self->head->next->is_head = false;
-        self->head->next->next = NULL;
-        self->head->next->coord_x = self->head->coord_x;
-        self->head->next->coord_y = self->head->coord_y;
+        previous_p->next = (struct SnakePart *)malloc(sizeof(struct SnakePart));
+        previous_p->next->is_head = false;
+        previous_p->next->next = NULL;
+        previous_p->next->coord_x = old_x;
+        previous_p->next->coord_y = old_y;
     }
-
-    // Do "trailing"
-    // WIP
 }
 
 static inline void _debug_assert_pointers(struct SnakeGameManager *ptr);
@@ -64,13 +88,15 @@ static inline void _update_scene(struct SnakeGameManager *self)
     assert(self->apple_coord_x < self->cols && self->apple_coord_x >= 0);
     self->scene[self->apple_coord_y][self->apple_coord_x] = CELL_APPLE;
     assert(self->head);
-    assert(self->head->coord_y < self->rows && self->head->coord_y >= 0);
-    assert(self->head->coord_x < self->cols && self->head->coord_x >= 0);
-    self->scene[self->head->coord_y][self->head->coord_x] = CELL_SNAKE_HEAD;
+    if (self->head->coord_y >= 0 && self->head->coord_y < self->rows &&
+        self->head->coord_x >= 0 && self->head->coord_x < self->cols)
+        self->scene[self->head->coord_y][self->head->coord_x] = CELL_SNAKE_HEAD;
 
     struct SnakePart *current = self->head->next;
     while (current != NULL)
     {
+        assert(current->coord_y >= 0 && current->coord_y < self->rows);
+        assert(current->coord_x >= 0 && current->coord_x < self->cols);
         self->scene[current->coord_y][current->coord_x] = CELL_SNAKE_BODY;
     }
 }
@@ -91,7 +117,10 @@ static inline void _deinit_snake_parts(struct SnakePart *head)
     }
 }
 
-static inline void _append_char_to_dynamic_string(char **str_p, const char c_to_append, int *current_size_p, int *current_capacity_p)
+static inline void _append_char_to_dynamic_string(char **str_p,
+                                                  const char c_to_append,
+                                                  int *current_size_p,
+                                                  int *current_capacity_p)
 {
     assert(str_p);
     assert(*str_p);

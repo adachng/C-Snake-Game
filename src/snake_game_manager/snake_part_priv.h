@@ -12,6 +12,21 @@ struct SnakePart
     struct SnakePart *next;
 }; // struct SnakePart
 
+struct SnakePart *SnakePart__allocate_instance(const bool is_head,
+                                               const int coord_x,
+                                               const int coord_y,
+                                               const struct SnakePart *next)
+{
+    struct SnakePart *ret = (struct SnakePart *)malloc(sizeof(struct SnakePart));
+
+    ret->is_head = is_head;
+    ret->coord_x = coord_x;
+    ret->coord_y = coord_y;
+    ret->next = next;
+
+    return ret;
+}
+
 // TODO: init head at(?)
 
 #endif // SRC_SNAKE_GAME_MANAGER_SNAKE_PART_PRIV_H
