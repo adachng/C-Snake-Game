@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <assert.h>
 
 #include <rktest/rktest.h>
 #include <snake_game_manager.h>
