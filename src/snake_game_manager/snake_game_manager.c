@@ -259,6 +259,12 @@ char *SnakeGameManager__alloc_render_scene_to_string(struct SnakeGameManager *se
     return ret;
 }
 
+void SnakeGameManager__get_dimensions(struct SnakeGameManager *self, int *x, int *y)
+{
+    *x = self->cols;
+    *y = self->rows;
+}
+
 void SnakeGameManager__debug_get_snake_head_coord(struct SnakeGameManager *self,
                                                   int *x,
                                                   int *y)
