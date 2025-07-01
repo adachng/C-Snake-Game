@@ -2,6 +2,7 @@ add_executable(tests
     main.c
     factorial_tests.c
     snake_gameplay_tests.c
+    snake_gameplay_stress_tests.c
 )
 
 target_include_directories(tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

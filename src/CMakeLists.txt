@@ -10,5 +10,6 @@ add_executable(${MAIN_TARGET}
 
 target_include_directories(${MAIN_TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${MAIN_TARGET}
+    PRIVATE SDL3::SDL3
     PRIVATE snake_game_manager
 )
