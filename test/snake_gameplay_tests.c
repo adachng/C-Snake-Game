@@ -13,7 +13,7 @@ TEST(snake_gameplay_tests, scene_init_test)
         // ". @ .\n"
         // "$ . ."
         snake_game_manager = SnakeGameManager__init(3, 3);
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
 
         // printf("DEBUG: scene_string =\n%s\n\n", scene_str); // NOTE: toggle to see the game scene
         EXPECT_STREQ(scene_str, ". . .\n"
@@ -31,7 +31,7 @@ TEST(snake_gameplay_tests, scene_init_test)
         // "$ . . .\n"
         // ". . . ."
         snake_game_manager = SnakeGameManager__init(4, 4);
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
 
         // printf("DEBUG: scene_string =\n%s\n\n", scene_str); // NOTE: toggle to see the game scene
         EXPECT_STREQ(scene_str, ". . . .\n"
@@ -51,7 +51,7 @@ TEST(snake_gameplay_tests, scene_init_test)
         // "$ . . . .\n"
         // ". . . . ."
         snake_game_manager = SnakeGameManager__init(5, 5);
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
 
         // printf("DEBUG: scene_string =\n%s\n\n", scene_str); // NOTE: toggle to see the game scene
         EXPECT_STREQ(scene_str,
@@ -72,7 +72,7 @@ TEST(snake_gameplay_tests, scene_init_test)
         // "$ . . . .\n"
         // ". . . . ."
         snake_game_manager = SnakeGameManager__init(5, 4);
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
 
         // printf("DEBUG: scene_string =\n%s\n\n", scene_str); // NOTE: toggle to see the game scene
         EXPECT_STREQ(scene_str, ". . . . .\n"
@@ -92,7 +92,7 @@ TEST(snake_gameplay_tests, scene_init_test)
         // "$ . . .\n"
         // ". . . ."
         snake_game_manager = SnakeGameManager__init(4, 5);
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
 
         // printf("DEBUG: scene_string =\n%s\n\n", scene_str); // NOTE: toggle to see the game scene
         EXPECT_STREQ(scene_str, ". . . .\n"
@@ -155,7 +155,7 @@ TEST(snake_gameplay_tests, basic_movement_test)
         // ". @ .\n"
         // "$ . ."
         snake_game_manager = SnakeGameManager__init(3, 3);
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
 
         EXPECT_STREQ(scene_str, ". . .\n"
                                 ". @ .\n"
@@ -169,7 +169,7 @@ TEST(snake_gameplay_tests, basic_movement_test)
         // ". $ ."
         SnakeGameManager__update(snake_game_manager);
 
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, ". . .\n"
                                 ". @ .\n"
                                 ". $ .");
@@ -182,7 +182,7 @@ TEST(snake_gameplay_tests, basic_movement_test)
         // ". . $"
         SnakeGameManager__update(snake_game_manager);
 
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, ". . .\n"
                                 ". @ .\n"
                                 ". . $");
@@ -196,7 +196,7 @@ TEST(snake_gameplay_tests, basic_movement_test)
         // ". . ."
         SnakeGameManager__update(snake_game_manager);
 
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, ". . .\n"
                                 ". @ $\n"
                                 ". . .");
@@ -209,7 +209,7 @@ TEST(snake_gameplay_tests, basic_movement_test)
         // ". . ."
         SnakeGameManager__update(snake_game_manager);
 
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, ". . $\n"
                                 ". @ .\n"
                                 ". . .");
@@ -223,7 +223,7 @@ TEST(snake_gameplay_tests, basic_movement_test)
         // ". . ."
         SnakeGameManager__update(snake_game_manager);
 
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, ". $ .\n"
                                 ". @ .\n"
                                 ". . .");
@@ -236,7 +236,7 @@ TEST(snake_gameplay_tests, basic_movement_test)
         // ". . ."
         SnakeGameManager__update(snake_game_manager);
 
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, "$ . .\n"
                                 ". @ .\n"
                                 ". . .");
@@ -250,7 +250,7 @@ TEST(snake_gameplay_tests, basic_movement_test)
         // ". . ."
         SnakeGameManager__update(snake_game_manager);
 
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, ". . .\n"
                                 "$ @ .\n"
                                 ". . .");
@@ -263,7 +263,7 @@ TEST(snake_gameplay_tests, basic_movement_test)
         // "$ . ."
         SnakeGameManager__update(snake_game_manager);
 
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, ". . .\n"
                                 ". @ .\n"
                                 "$ . .");
@@ -277,7 +277,7 @@ TEST(snake_gameplay_tests, basic_movement_test)
         // ". $ ."
         SnakeGameManager__update(snake_game_manager);
 
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, ". . .\n"
                                 ". @ .\n"
                                 ". $ .");
@@ -290,7 +290,7 @@ TEST(snake_gameplay_tests, basic_movement_test)
         // ". . $"
         SnakeGameManager__update(snake_game_manager);
 
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, ". . .\n"
                                 ". @ .\n"
                                 ". . $");
@@ -314,7 +314,7 @@ TEST(snake_gameplay_tests, game_score_and_movement_test)
         EXPECT_EQ(SnakeGameManager__get_score(snake_game_manager), 0);
 
         SnakeGameManager__update(snake_game_manager);
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, ". . .\n"
                                 ". @ .\n"
                                 ". $ .");
@@ -332,7 +332,7 @@ TEST(snake_gameplay_tests, game_score_and_movement_test)
         // ". @ .\n"
         // ". $ .\n"
         // ". # ."
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, ". @ .\n"
                                 ". $ .\n"
                                 ". # .");
@@ -344,7 +344,7 @@ TEST(snake_gameplay_tests, game_score_and_movement_test)
         EXPECT_EQ(SnakeGameManager__get_score(snake_game_manager), 2);
 
         SnakeGameManager__debug_set_apple_coord(snake_game_manager, 0, 0);
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, "@ $ .\n"
                                 ". # .\n"
                                 ". # .");
@@ -357,7 +357,7 @@ TEST(snake_gameplay_tests, game_score_and_movement_test)
         EXPECT_EQ(SnakeGameManager__get_score(snake_game_manager), 3);
 
         SnakeGameManager__debug_set_apple_coord(snake_game_manager, 0, 1);
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, "$ # .\n"
                                 "@ # .\n"
                                 ". # .");
@@ -370,7 +370,7 @@ TEST(snake_gameplay_tests, game_score_and_movement_test)
         EXPECT_EQ(SnakeGameManager__get_score(snake_game_manager), 4);
 
         SnakeGameManager__debug_set_apple_coord(snake_game_manager, 0, 2);
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, "# # .\n"
                                 "$ # .\n"
                                 "@ # .");
@@ -436,7 +436,7 @@ TEST(snake_gameplay_tests, game_lost_test)
         SnakeGameManager__update(snake_game_manager);
         SnakeGameManager__debug_set_apple_coord(snake_game_manager, 2, 2);
 
-        char *scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        char *scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, "# # .\n"
                                 "$ # .\n"
                                 ". # @");
@@ -447,7 +447,7 @@ TEST(snake_gameplay_tests, game_lost_test)
         SnakeGameManager__update(snake_game_manager);
         EXPECT_TRUE(SnakeGameManager__is_game_lost(snake_game_manager));
 
-        scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+        scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
         EXPECT_STREQ(scene_str, "# # .\n"
                                 "# $# .\n" // direction irrelevant to order of $# (or #$)
                                 ". . @");
@@ -534,7 +534,7 @@ TEST(snake_gameplay_tests, invalid_direction_change_test)
     SnakeGameManager__update(snake_game_manager);
     SnakeGameManager__debug_set_apple_coord(snake_game_manager, 0, 0);
 
-    scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+    scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
     EXPECT_STREQ(scene_str, "@ . .\n"
                             ". . .\n"
                             ". # $");
@@ -547,7 +547,7 @@ TEST(snake_gameplay_tests, invalid_direction_change_test)
     // ". . #"
     SnakeGameManager__set_direction(snake_game_manager, 's');
     SnakeGameManager__update(snake_game_manager);
-    scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+    scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
     EXPECT_STREQ(scene_str, "@ . $\n"
                             ". . #\n"
                             ". . .");
@@ -561,7 +561,7 @@ TEST(snake_gameplay_tests, invalid_direction_change_test)
     // ". . @"
     SnakeGameManager__set_direction(snake_game_manager, 'd');
     SnakeGameManager__update(snake_game_manager);
-    scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+    scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
     EXPECT_STREQ(scene_str, "$ # .\n"
                             ". . .\n"
                             ". . @");
@@ -574,7 +574,7 @@ TEST(snake_gameplay_tests, invalid_direction_change_test)
     // ". . @"
     SnakeGameManager__set_direction(snake_game_manager, 'w');
     SnakeGameManager__update(snake_game_manager);
-    scene_str = SnakeGameManager_alloc_render_scene_to_string(snake_game_manager);
+    scene_str = SnakeGameManager__alloc_render_scene_to_string(snake_game_manager);
     EXPECT_STREQ(scene_str, ". . .\n"
                             "# . .\n"
                             "$ . @");
