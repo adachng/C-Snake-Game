@@ -265,6 +265,11 @@ void SnakeGameManager__get_dimensions(struct SnakeGameManager *self, int *x, int
     *y = self->rows;
 }
 
+enum GridCellState **SnakeGameManager__get_scene_2d_array(struct SnakeGameManager *self)
+{
+    return self->scene;
+}
+
 void SnakeGameManager__debug_get_snake_head_coord(struct SnakeGameManager *self,
                                                   int *x,
                                                   int *y)
