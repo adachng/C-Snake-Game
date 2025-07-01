@@ -261,12 +261,18 @@ char *SnakeGameManager__alloc_render_scene_to_string(struct SnakeGameManager *se
 
 void SnakeGameManager__get_dimensions(struct SnakeGameManager *self, int *x, int *y)
 {
+    _debug_assert_pointers(self);
+
+    assert(x);
+    assert(y);
+
     *x = self->cols;
     *y = self->rows;
 }
 
 enum GridCellState **SnakeGameManager__get_scene_2d_array(struct SnakeGameManager *self)
 {
+    _debug_assert_pointers(self);
     return self->scene;
 }
 
