@@ -221,7 +221,7 @@ void SnakeGameManager__set_direction(struct SnakeGameManager *self, const char d
     }
 }
 
-char *SnakeGameManager_alloc_render_scene_to_string(struct SnakeGameManager *self)
+char *SnakeGameManager__alloc_render_scene_to_string(struct SnakeGameManager *self)
 {
     _debug_assert_pointers(self);
 

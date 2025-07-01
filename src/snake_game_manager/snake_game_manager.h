@@ -59,7 +59,7 @@ void SnakeGameManager__set_direction(struct SnakeGameManager *self, const char d
  * @param self
  * @return Dymanically-allocated string.
  */
-char *SnakeGameManager_alloc_render_scene_to_string(struct SnakeGameManager *self);
+char *SnakeGameManager__alloc_render_scene_to_string(struct SnakeGameManager *self);
 
 void SnakeGameManager__debug_get_snake_head_coord(struct SnakeGameManager *self,
                                                   int *x,
