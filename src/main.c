@@ -19,12 +19,16 @@
 #define GAME_SCENE_WIDTH 20       // default 20
 #define GAME_SCENE_HEIGHT 20      // default 20
 
-#define GAME_TARGET_TICK_PERIOD_MS (1000.0f / GAME_SNAKE_SPEED)
+#define GAME_MIN_CPU_DELAY_MS        \
+    (1000U /                         \
+     (Uint32)(GAME_SNAKE_SPEED *     \
+              GAME_SPEED_UP_FACTOR * \
+              4.0f)) // must be at least 2.0f, preferably even
 
 typedef struct AppState
 {
     Uint64 previous_tick;
-    float tick_progression; // initially 0.0f, if >= 1.0f then -= 1.0f and update game
+    Uint64 tick_progression; // initially 0U, if >= 1000U then -= 1000U and update game
     struct SnakeGameManager *snake_game_manager;
     SDL_Window *window;
     SDL_Renderer *renderer;
@@ -211,6 +215,22 @@ static inline bool render_gameplay_visuals(struct SnakeGameManager *snake_game_m
     return true;
 }
 
+/**
+ * @brief Updates the tick progression value.
+ *
+ * The tick progression is a value that represents progress towards the next tick.
+ * It is incremented each iteration of the app, and the increment is the delta time
+ * multiplied by the speed of the snake, which is either (GAME_SNAKE_SPEED) or
+ * (GAME_SNAKE_SPEED * GAME_SPEED_UP_FACTOR) depending on if player is holding spacebar.
+ *
+ * This creates an effect where the game does not wait for the next iteration to execute
+ * the speeding up. If it is preferred that the game waits for next iteration to execute
+ * the speeding up, the SDL_Delay() parameter should be made variable instead, and the game
+ * should update immediately after the delay.
+ *
+ * @param appstate_p SDL's AppState instance pointer.
+ * @param dt_ms The delta time in milliseconds.
+ */
 static inline void update_tick_progression(AppState *appstate_p, const Uint64 dt_ms)
 {
     if (appstate_p->is_game_paused)
@@ -218,9 +238,9 @@ static inline void update_tick_progression(AppState *appstate_p, const Uint64 dt
 
     float tick_increment;
     if (appstate_p->is_game_speeding_up)
-        tick_increment = (float)dt_ms * GAME_SNAKE_SPEED * GAME_SPEED_UP_FACTOR / 1000.0f;
+        tick_increment = dt_ms * GAME_SNAKE_SPEED * GAME_SPEED_UP_FACTOR;
     else
-        tick_increment = (float)dt_ms * GAME_SNAKE_SPEED / 1000.0f;
+        tick_increment = dt_ms * GAME_SNAKE_SPEED;
 
     appstate_p->tick_progression = appstate_p->tick_progression + tick_increment;
 }
@@ -233,8 +253,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
         return SDL_APP_FAILURE;
     }
 
-    if (!SDL_SetAppMetadata("Snake Game CPP", "1.0.1", "com.github.adachng.SnakeGameCPP"))
+    if (!SDL_SetAppMetadata("C Snake Game", "1.0.0", "com.github.adachng.SnakeGameCPP"))
     {
+        printf("SDL_SetAppMetadata error: %s\n", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
@@ -244,7 +265,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char **argv)
     appstate_p->snake_game_manager = SnakeGameManager__init(GAME_SCENE_WIDTH, GAME_SCENE_HEIGHT);
     appstate_p->is_game_paused = false;
     appstate_p->is_game_speeding_up = false;
-    appstate_p->tick_progression = 0.0f;
+    appstate_p->tick_progression = 0U;
 
     appstate_p->window = SDL_CreateWindow("C Snake Game", APP_WINDOW_WIDTH, APP_WINDOW_HEIGHT, SDL_WINDOW_INPUT_FOCUS);
     if (appstate_p->window == NULL)
@@ -279,13 +300,17 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     const Uint64 now = SDL_GetTicks();
     const Uint64 dt_ms = now - appstate_p->previous_tick;
-    update_tick_progression(appstate_p, dt_ms); // WIP: revamp tick progression
+    appstate_p->previous_tick = now;
+    update_tick_progression(appstate_p, dt_ms);
 
     bool is_game_updated_this_iteration = false;
-    while (appstate_p->tick_progression >= 1.0f)
+    while (appstate_p->tick_progression >= 1000U)
     {
+        if (SnakeGameManager__is_game_won(appstate_p->snake_game_manager) ||
+            SnakeGameManager__is_game_lost(appstate_p->snake_game_manager))
+            break;
         is_game_updated_this_iteration = true;
-        appstate_p->tick_progression = appstate_p->tick_progression - 1.0f;
+        appstate_p->tick_progression = appstate_p->tick_progression - 1000U;
         if (appstate_p->is_game_paused == false)
             SnakeGameManager__update(appstate_p->snake_game_manager);
     }
@@ -300,8 +325,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
                                 appstate_p->is_game_paused);
     }
 
-// WIP: MOST LIKELY THIS IS CAUSING A PROBLEM!!!
-    SDL_Delay((Uint32)GAME_TARGET_TICK_PERIOD_MS / 2U); // MUST BE DIVIDED BY >= 2U; saves some CPU
+    SDL_Delay(GAME_MIN_CPU_DELAY_MS);
 
     return SDL_APP_CONTINUE;
 }
@@ -324,6 +348,12 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
                 SnakeGameManager__is_game_lost(appstate_p->snake_game_manager))
                 return SDL_APP_SUCCESS;
             appstate_p->is_game_paused = !appstate_p->is_game_paused;
+            render_gameplay_visuals(appstate_p->snake_game_manager,
+                                    appstate_p->window,
+                                    appstate_p->renderer,
+                                    APP_GAME_MAP_MARGIN_PX,
+                                    APP_GAME_MAP_MARGIN_PX,
+                                    appstate_p->is_game_paused);
             break;
         case SDL_SCANCODE_W:
         case SDL_SCANCODE_UP:
@@ -350,6 +380,10 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
             {
                 SnakeGameManager__deinit(appstate_p->snake_game_manager);
                 appstate_p->snake_game_manager = SnakeGameManager__init(GAME_SCENE_WIDTH, GAME_SCENE_HEIGHT);
+                appstate_p->is_game_paused = false;
+                // appstate_p->is_game_speeding_up = false; // NOTE: toggle depending on control preference
+                appstate_p->tick_progression = 0U;
+                appstate_p->previous_tick = SDL_GetTicks();
             }
         default:
             break;
