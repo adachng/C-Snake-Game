@@ -384,6 +384,13 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
                 // appstate_p->is_game_speeding_up = false; // NOTE: toggle depending on control preference
                 appstate_p->tick_progression = 0U;
                 appstate_p->previous_tick = SDL_GetTicks();
+
+                render_gameplay_visuals(appstate_p->snake_game_manager,
+                                        appstate_p->window,
+                                        appstate_p->renderer,
+                                        APP_GAME_MAP_MARGIN_PX,
+                                        APP_GAME_MAP_MARGIN_PX,
+                                        appstate_p->is_game_paused);
             }
         default:
             break;
